@@ -111,4 +111,69 @@ int main(void)
 
     return 0;
 }
+
+#include "raylib.h"
+#include "rlImGui.h"
+#include <cmath>
+
+struct Circle {
+    Vector2 position;
+    Vector2 velocity;
+    float radius;
+    Color color;
+};
+
+bool CheckCollisionCircles(Vector2 center1, float radius1, Vector2 center2, float radius2) {
+    float dx = center2.x - center1.x;
+    float dy = center2.y - center1.y;
+    float distance = sqrt(dx * dx + dy * dy);
+
+    if (distance <= radius1 + radius2) {
+        return true;
+    }
+    return false;
+}
+
+void UpdateCircle(Circle& circle) {
+    circle.position.x += circle.velocity.x;
+    circle.position.y += circle.velocity.y;
+}
+
+int main(void)
+{
+    const int screenWidth = 800;
+    const int screenHeight = 450;
+
+    InitWindow(screenWidth, screenHeight, "Raylib Collision Avoidance Example");
+
+    Circle circleA = { { 200, 200 }, { 2, 1 }, 50, RED };
+    Circle circleB = { { 400, 300 }, { -2, -1 }, 70, BLUE };
+
+    SetTargetFPS(60);
+
+    while (!WindowShouldClose())
+    {
+        if (CheckCollisionCircles(circleA.position, circleA.radius, circleB.position, circleB.radius)) {
+            // In case of collision, change directions
+            circleA.velocity.x = -circleA.velocity.x;
+            circleA.velocity.y = -circleA.velocity.y;
+            circleB.velocity.x = -circleB.velocity.x;
+            circleB.velocity.y = -circleB.velocity.y;
+        }
+
+        UpdateCircle(circleA);
+        UpdateCircle(circleB);
+
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+
+        DrawCircleV(circleA.position, circleA.radius, circleA.color);
+        DrawCircleV(circleB.position, circleB.radius, circleB.color);
+
+        EndDrawing();
+    }
+
+    CloseWindow();
+    return 0;
+}
 */
